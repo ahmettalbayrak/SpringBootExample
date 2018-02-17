@@ -8,9 +8,11 @@ import java.util.List;
  */
 public interface UserService<User> extends BaseService<User>{
 	
-	public List<User> getTable(User entity);
+	public List<User> getUsers();
             
     public void update(User entity, int id);
     
-    public User findUserByEmail(String email);
+    public User findUserByEmail(String email, String password);
+    
+   
 }

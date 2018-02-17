@@ -13,6 +13,6 @@ public interface BaseService<T>  {
     
     public void save(T entity);
     
-    public void delete(int id);
+    public void delete(Long id);
     
 }

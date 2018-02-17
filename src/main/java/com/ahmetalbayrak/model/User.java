@@ -23,12 +23,12 @@ import org.springframework.data.annotation.Transient;
  *
  */
 @Entity
-@Table(name="user")
+@Table(name="users")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="user_id")
-	private int user_id;
+	@Column(name="userId")
+	private int userId;
 	
 	@Column(name="firstName")
 	private String firstName;
@@ -43,16 +43,17 @@ public class User {
 	@Transient
 	private String password;
 
+	
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId"))
 	private Set<Role> user_role;
 
-	public int getUser_id() {
-		return user_id;
+	public int userId() {
+		return userId;
 	}
 
-	public void setUser_id(int user_id) {
-		this.user_id = user_id;
+	public void userId(int userId) {
+		this.userId = userId;
 	}
 
 	public String getFirstName() {
@@ -94,6 +95,8 @@ public class User {
 	public void setUser_role(Set<Role> user_role) {
 		this.user_role = user_role;
 	}
+	
+	
 
 	
 }

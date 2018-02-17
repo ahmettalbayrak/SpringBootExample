@@ -20,6 +20,7 @@ public class UserServiceImpl implements UserService<User>{
 	
 	@Autowired
 	private UserRepository userRepository;
+
 	@Override
 	public void save(User entity) {
 		userRepository.save(entity);
@@ -27,15 +28,14 @@ public class UserServiceImpl implements UserService<User>{
 	}
 
 	@Override
-	public void delete(int id) {
-		// TODO Auto-generated method stub
+	public void delete(Long id) {
+		userRepository.delete(id);
 		
 	}
 
 	@Override
-	public List<User> getTable(User entity) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<User> getUsers() {
+		return userRepository.findAll();
 	}
 
 	@Override
@@ -45,9 +45,13 @@ public class UserServiceImpl implements UserService<User>{
 	}
 
 	@Override
-	public User findUserByEmail(String email) {
+	public User findUserByEmail(String email, String password) {
 		// TODO Auto-generated method stub
-		return null;
+		return userRepository.findUserByEmail(email, password);
 	}
+
+	
+	
+	
 
 }
