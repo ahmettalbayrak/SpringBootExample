@@ -10,6 +10,7 @@
 
 	<name>springboot</name>
 	<description>Demo project for Spring Boot</description>
+	
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -19,10 +20,11 @@
 	</parent>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-	</properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <start-class>com.ahmetalbayrak.springboot.SpringbootApplication</start-class>
+    </properties>
 
 	<dependencies>
 		<dependency>
@@ -53,7 +55,14 @@
 			<groupId>net.sourceforge.nekohtml</groupId>
 			<artifactId>nekohtml</artifactId>
 			<version>1.9.21</version><!--$NO-MVN-MAN-VER$-->
-		</dependency>
+		</dependency><dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
 	</dependencies>
 
 	<build>
