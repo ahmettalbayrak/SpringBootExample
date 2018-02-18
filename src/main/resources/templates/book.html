@@ -1,10 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+	<title>Spring Security Tutorial</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+
 <body>
-	Book 
+
+	
+	<div class="container">
+		
+		<form th:action="@{/book}" method="POST" class="form-signin">
+			<h3 class="form-signin-heading" th:text="Kitaplar"></h3>
+			<br/>
+			 
+			<input type="text" id="bookName" name="bookName"  th:placeholder="KitapAdiEkle"
+				class="form-control" /> <br/> 
+				
+			<div align="center" th:if="${param.error}">
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" name="Submit" value="Login" type="Submit" th:text="Ekle"></button>
+		</form>
+		<br>
+		<br>
+		<div class="container">
+			<table id="myTableId" dt:table="true" border="1" class="form-signin" width="400" >
+			<h3>Kayıtlı Kitaplar</h3>
+		        <thead>
+		            <tr>
+		                <th>ISBN</th>
+		                <th>Name</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            <tr th:each="book : ${books}">
+		                <td th:text="${book.isbn}"></td>
+		                <td th:text="${book.bookName}"></td>
+		            </tr>
+		        </tbody>
+	    	</table>
+		</div>
+	</div>
 </body>
 </html>

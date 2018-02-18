@@ -13,9 +13,6 @@ import com.ahmetalbayrak.model.Books;
  */
 public interface BooksService extends BaseService<Books>{
 
-	public List<Books> getUsers();
+	public List<Books> getBooks();
     
-    public void update(Books entity, int isbn);
-    
-    public Books findUserByEmail(String isbn);
 }

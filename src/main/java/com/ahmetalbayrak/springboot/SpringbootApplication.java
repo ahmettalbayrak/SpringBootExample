@@ -1,13 +1,9 @@
 package com.ahmetalbayrak.springboot;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 
-import org.aspectj.weaver.patterns.PerSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -25,10 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ahmetalbayrak.controller.LoginController;
 import com.ahmetalbayrak.model.Books;
-import com.ahmetalbayrak.model.Role;
 import com.ahmetalbayrak.model.User;
+import com.ahmetalbayrak.model.UserBook;
 import com.ahmetalbayrak.service.BooksService;
-import com.ahmetalbayrak.service.RoleService;
 import com.ahmetalbayrak.service.UserService;
 
 @SpringBootApplication
@@ -39,8 +34,6 @@ import com.ahmetalbayrak.service.UserService;
 @EnableAutoConfiguration
 public class SpringbootApplication extends SpringBootServletInitializer{
 
-	@Autowired
-	private RoleService roleService;
 	@Autowired
 	private UserService<User> userService;
 	@Autowired 
@@ -57,6 +50,24 @@ public class SpringbootApplication extends SpringBootServletInitializer{
 		SpringApplication.run(SpringbootApplication.class, args);
 	}
 	
+	@RequestMapping(value={"/", "/index"}, method = RequestMethod.GET)
+	public ModelAndView homePage(){
+		
+		if(modelAndView.getModel().containsKey("user") == true ) {
+			modelAndView.setViewName("book");
+		}else {
+			modelAndView.setViewName("index");
+		}
+		
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/login", method = RequestMethod.GET)
+	public ModelAndView login(){
+		modelAndView.setViewName("login");
+		return modelAndView;
+	}
+	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ModelAndView loginUser(@Valid User user, BindingResult bindingResult) {
 		User email = new User();
@@ -64,6 +75,12 @@ public class SpringbootApplication extends SpringBootServletInitializer{
 		email=userService.findUserByEmail(user.getEmail());
 		pass=userService.findUserByPassword(user.getPassword());
 		loginControl(email, pass);		
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/registration", method = RequestMethod.GET)
+	public ModelAndView registration(){
+		modelAndView.setViewName("registration");
 		return modelAndView;
 	}
 	
@@ -83,58 +100,27 @@ public class SpringbootApplication extends SpringBootServletInitializer{
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/login", method = RequestMethod.GET)
-	public ModelAndView login(){
-		modelAndView.setViewName("login");
+	@RequestMapping(value="/book", method = RequestMethod.GET)
+	public ModelAndView book(){		
+		List<Books> books = bookService.getBooks();		
+		modelAndView.addObject("books", books);
+		modelAndView.setViewName("book");
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/registration", method = RequestMethod.GET)
-	public ModelAndView registration(){
-		modelAndView.setViewName("registration");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value={"/", "/index"}, method = RequestMethod.GET)
-	public ModelAndView homePage(){
-		//testData();
-		
-		if(modelAndView.getModel().containsKey("user") == true ) {
-			modelAndView.setViewName("book");
-		}else {
-			modelAndView.setViewName("index");
-		}
-		
-		return modelAndView;
-	}
-	
-	void testData() {
-		Role role = new Role();
-		role.setRole("admin");
-		roleService.save(role);
-		
-		Role role2 = new Role();
-		role.setRole("use");
-		roleService.save(role2);
-		
-		Set<Role> setRole = new HashSet<Role>();
-		setRole.add(role);
-		setRole.add(role2);
-		
-		User user = new User();
-		user.setFirstName("Ahmet");
-		user.setLastName("Albayrak");
-		user.setPassword("1");
-		user.setEmail("ahmet@albayrak.com");
-		//user.setUser_role(setRole);
-		userService.save(user);
-		
-	
-		
+	@RequestMapping(value = "/book", method = RequestMethod.POST)
+	public ModelAndView book(@Valid Books formBooks, BindingResult bindingResult) {
 		Books book = new Books();
-		book.setBookName("Kürk Mantolu Madonna");
-		bookService.save(book);
-	}
+		book.setBookName(formBooks.getBookName());
+		if(book!=null) {
+			bookService.save(book);
+			modelAndView.setViewName("book");
+			return modelAndView;
+		}
+		modelAndView.setViewName("book");
+		return modelAndView;
+	}	
+	
 	void loginControl(User email, User pass) {
 		if(email == pass && email!=null) {
 			modelAndView.addObject("successMessage", "Giriş Başarılı");

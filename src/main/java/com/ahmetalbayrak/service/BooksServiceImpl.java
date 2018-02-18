@@ -34,21 +34,9 @@ public class BooksServiceImpl implements BooksService {
 	}
 
 	@Override
-	public List<Books> getUsers() {
+	public List<Books> getBooks() {
 		
 		return booksRepository.findAll();
-	}
-
-	@Override
-	public void update(Books entity, int isbn) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Books findUserByEmail(String isbn) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
