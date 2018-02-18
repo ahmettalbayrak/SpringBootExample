@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ahmetalbayrak.controller.LoginController;
+import com.ahmetalbayrak.controller.HomeController;
 import com.ahmetalbayrak.model.Books;
 import com.ahmetalbayrak.model.User;
 import com.ahmetalbayrak.model.UserBook;
@@ -33,102 +33,15 @@ import com.ahmetalbayrak.service.UserService;
 @EnableJpaRepositories("com.ahmetalbayrak.repository")
 @EnableAutoConfiguration
 public class SpringbootApplication extends SpringBootServletInitializer{
-
-	@Autowired
-	private UserService<User> userService;
-	@Autowired 
-	private BooksService bookService;
-	
-	ModelAndView modelAndView = new ModelAndView();
 	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-		return builder.sources(LoginController.class);
+		return builder.sources(HomeController.class);
 	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringbootApplication.class, args);
 	}
 	
-	@RequestMapping(value={"/", "/index"}, method = RequestMethod.GET)
-	public ModelAndView homePage(){
-		
-		if(modelAndView.getModel().containsKey("user") == true ) {
-			modelAndView.setViewName("book");
-		}else {
-			modelAndView.setViewName("index");
-		}
-		
-		return modelAndView;
-	}
 	
-	@RequestMapping(value="/login", method = RequestMethod.GET)
-	public ModelAndView login(){
-		modelAndView.setViewName("login");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ModelAndView loginUser(@Valid User user, BindingResult bindingResult) {
-		User email = new User();
-		User pass = new User();
-		email=userService.findUserByEmail(user.getEmail());
-		pass=userService.findUserByPassword(user.getPassword());
-		loginControl(email, pass);		
-		return modelAndView;
-	}
-	
-	@RequestMapping(value="/registration", method = RequestMethod.GET)
-	public ModelAndView registration(){
-		modelAndView.setViewName("registration");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value = "/registration", method = RequestMethod.POST)
-	public ModelAndView registerUser(@Valid User formUser, BindingResult bindingResult) {
-		User user = new User();
-		user.setEmail(formUser.getEmail());
-		user.setFirstName(formUser.getFirstName());
-		user.setLastName(formUser.getLastName());
-		user.setPassword(formUser.getPassword());
-		if(user!=null) {
-			userService.save(user);
-			modelAndView.setViewName("login");
-			return modelAndView;
-		}
-		modelAndView.setViewName("register");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value="/book", method = RequestMethod.GET)
-	public ModelAndView book(){		
-		List<Books> books = bookService.getBooks();		
-		modelAndView.addObject("books", books);
-		modelAndView.setViewName("book");
-		return modelAndView;
-	}
-	
-	@RequestMapping(value = "/book", method = RequestMethod.POST)
-	public ModelAndView book(@Valid Books formBooks, BindingResult bindingResult) {
-		Books book = new Books();
-		book.setBookName(formBooks.getBookName());
-		if(book!=null) {
-			bookService.save(book);
-			modelAndView.setViewName("book");
-			return modelAndView;
-		}
-		modelAndView.setViewName("book");
-		return modelAndView;
-	}	
-	
-	void loginControl(User email, User pass) {
-		if(email == pass && email!=null) {
-			modelAndView.addObject("successMessage", "Giriş Başarılı");
-			modelAndView.addObject("user", new User());
-			modelAndView.setViewName("book");
-		}else {		
-			modelAndView.addObject("errorMessage", "Kullanıcı adı veya şifre Başarısız");
-			modelAndView.setViewName("registration");
-		}
-	}	
 }
