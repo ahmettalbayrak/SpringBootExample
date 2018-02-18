@@ -4,6 +4,7 @@
 package com.ahmetalbayrak.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,10 +46,24 @@ public class UserServiceImpl implements UserService<User>{
 	}
 
 	@Override
-	public User findUserByEmail(String email, String password) {
+	public User findUserByEmail(String email) {
 		// TODO Auto-generated method stub
-		return userRepository.findUserByEmail(email, password);
+		return userRepository.findByEmail(email);
 	}
+
+	@Override
+	public User findUserByPassword(String password) {
+		// TODO Auto-generated method stub
+		return userRepository.findByPassword(password);
+	}
+
+	
+
+	
+
+	
+
+	
 
 	
 	

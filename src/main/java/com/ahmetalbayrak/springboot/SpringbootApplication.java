@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.aspectj.weaver.patterns.PerSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +17,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,44 +42,73 @@ public class SpringbootApplication extends SpringBootServletInitializer{
 	@Autowired
 	private RoleService roleService;
 	@Autowired
-	private UserService userService;
+	private UserService<User> userService;
 	@Autowired 
 	private BooksService bookService;
+	
+	ModelAndView modelAndView = new ModelAndView();
 	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(LoginController.class);
 	}
 
-	
 	public static void main(String[] args) {
-		System.out.println("App a girdi");
 		SpringApplication.run(SpringbootApplication.class, args);
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ModelAndView createNewUser() {
-		ModelAndView modelAndView = new ModelAndView();
-		
+	public ModelAndView loginUser(@Valid User user, BindingResult bindingResult) {
+		User email = new User();
+		User pass = new User();
+		email=userService.findUserByEmail(user.getEmail());
+		pass=userService.findUserByPassword(user.getPassword());
+		loginControl(email, pass);		
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/registration", method = RequestMethod.POST)
+	public ModelAndView registerUser(@Valid User formUser, BindingResult bindingResult) {
+		User user = new User();
+		user.setEmail(formUser.getEmail());
+		user.setFirstName(formUser.getFirstName());
+		user.setLastName(formUser.getLastName());
+		user.setPassword(formUser.getPassword());
+		if(user!=null) {
+			userService.save(user);
+			modelAndView.setViewName("login");
+			return modelAndView;
+		}
+		modelAndView.setViewName("register");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value="/login", method = RequestMethod.GET)
 	public ModelAndView login(){
-		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("login");
 		return modelAndView;
 	}
 	
 	@RequestMapping(value="/registration", method = RequestMethod.GET)
 	public ModelAndView registration(){
-		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("registration");
 		return modelAndView;
 	}
-	@RequestMapping(value="/", method = RequestMethod.GET)
+	
+	@RequestMapping(value={"/", "/index"}, method = RequestMethod.GET)
 	public ModelAndView homePage(){
+		//testData();
 		
+		if(modelAndView.getModel().containsKey("user") == true ) {
+			modelAndView.setViewName("book");
+		}else {
+			modelAndView.setViewName("index");
+		}
+		
+		return modelAndView;
+	}
+	
+	void testData() {
 		Role role = new Role();
 		role.setRole("admin");
 		roleService.save(role);
@@ -92,32 +124,25 @@ public class SpringbootApplication extends SpringBootServletInitializer{
 		User user = new User();
 		user.setFirstName("Ahmet");
 		user.setLastName("Albayrak");
-		user.setPassword("123456");
+		user.setPassword("1");
 		user.setEmail("ahmet@albayrak.com");
-		user.setUser_role(setRole);
+		//user.setUser_role(setRole);
 		userService.save(user);
 		
-		User user2 = new User();
-		List<User> arrList = new ArrayList<User>();
-		//userService.findUserByEmail("ahmet@albayrak.com","123456");
 	
-		System.out.println(user2.getFirstName());
-		
-		/*
-		for(int i=0;i<=arrList.size();i++) {
-			System.out.println(arrList.get(i).getFirstName());
-			System.out.println(arrList.get(i).getLastName());
-			System.out.println(arrList.get(i).getEmail());
-			break;	
-		}
 		
 		Books book = new Books();
 		book.setBookName("Kürk Mantolu Madonna");
-		bookService.save(book);*/
-		
-		
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("index");
-		return modelAndView;
+		bookService.save(book);
 	}
+	void loginControl(User email, User pass) {
+		if(email == pass && email!=null) {
+			modelAndView.addObject("successMessage", "Giriş Başarılı");
+			modelAndView.addObject("user", new User());
+			modelAndView.setViewName("book");
+		}else {		
+			modelAndView.addObject("errorMessage", "Kullanıcı adı veya şifre Başarısız");
+			modelAndView.setViewName("registration");
+		}
+	}	
 }

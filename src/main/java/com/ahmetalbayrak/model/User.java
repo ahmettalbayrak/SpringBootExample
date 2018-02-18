@@ -40,13 +40,8 @@ public class User {
 	private String email;
 	
 	@Column(name = "password")
-	@Transient
 	private String password;
 
-	
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId"))
-	private Set<Role> user_role;
 
 	public int userId() {
 		return userId;
@@ -86,17 +81,7 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public Set<Role> getUser_role() {
-		return user_role;
-	}
-
-	public void setUser_role(Set<Role> user_role) {
-		this.user_role = user_role;
-	}
-	
-	
+	}	
 
 	
 }
